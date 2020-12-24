@@ -6,7 +6,8 @@ from func import Encurvadura
 
 def main():
 
-	print(Encurvadura([1, 1]))
+	
+	Encurvadura([1, 1])
 
 
 if __name__ == '__main__':
