@@ -18,5 +18,5 @@ def Encurvadura(x):
 	W = l*(np.pi*r**2) # volume [mn]
 	tension_max = P/(np.pi*r**2) + Mf_max/W
 
-	return flexa, tension_max
+	return np.asarray(flexa), np.asarray(tension_max)
 

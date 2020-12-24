@@ -12,4 +12,4 @@ git commit -m "$commitMessage"
 
 git push #origin #$branch
 
-read
+#read
