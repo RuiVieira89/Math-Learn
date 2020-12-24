@@ -21,7 +21,10 @@ def main():
 
 	data = np.asarray(Encurvadura([heigth, eccentricity]))
 
-	print(data)
+	train_data = torch.Tensor([heigth, eccentricity])
+	test_data_label = torch.Tensor(data)
+
+
 
 
 if __name__ == '__main__':
