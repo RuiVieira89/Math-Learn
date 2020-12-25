@@ -19,10 +19,26 @@ def main():
 	eccentricity = np.arange(min_eccentricity, max_eccentricity, 
 		(max_eccentricity-min_eccentricity)/N_discretization)
 
-	data = np.asarray(Encurvadura([heigth, eccentricity]))
+	flexa, tension_max = np.asarray(Encurvadura(
+		[heigth, eccentricity]))
 
-	train_data = torch.Tensor([heigth, eccentricity])
-	test_data_label = torch.Tensor(data)
+	data = np.column_stack(
+		[heigth, eccentricity, flexa, tension_max])
+	np.random.shuffle(data)
+
+	TRAIN_PERCENT = 0.8
+	train_data = torch.Tensor(
+		data[0:int(data.shape[0]*TRAIN_PERCENT),0:2]
+		)
+	train_data_label = torch.Tensor(
+		data[0:int(data.shape[0]*TRAIN_PERCENT),2:4]
+		)
+	test_data = torch.Tensor(
+		data[0:int(data.shape[0]*(1-TRAIN_PERCENT)),0:2]
+		)
+	test_data_label = torch.Tensor(
+		data[0:int(data.shape[0]*(1-TRAIN_PERCENT)),2:4]
+		)
 
 
 
