@@ -23,30 +23,30 @@ eccentricity = np.arange(min_eccentricity, max_eccentricity,
 flexa, tension_max = np.asarray(Encurvadura(
 	[heigth, eccentricity]))
 
-# DATASET numpy to Torch
-data = np.column_stack(
+## DATASET numpy to Torch
+d_data = np.column_stack(
 	[heigth, eccentricity, flexa, tension_max])
-np.random.shuffle(data)
+np.random.shuffle(d_data)
 
 TRAIN_PERCENT = 0.8
 TRAIN_BATCH_SIZE = 10
-TEST_SIZE = int(np.round(data.shape[0]*(1-TRAIN_PERCENT)))
-TRAIN_SIZE = int(np.round(data.shape[0]*TRAIN_PERCENT))
+TEST_SIZE = int(np.round(d_data.shape[0]*(1-TRAIN_PERCENT)))
+TRAIN_SIZE = int(np.round(d_data.shape[0]*TRAIN_PERCENT))
 
 train_data = torch.Tensor(
-	data[0:TRAIN_SIZE,0:2]
+	d_data[0:TRAIN_SIZE,0:2]
 	)
 train_data_label = torch.Tensor(
-	data[0:TRAIN_SIZE,2:4]
+	d_data[0:TRAIN_SIZE,2:4]
 	)
 test_data = torch.Tensor(
-	data[0:TEST_SIZE,0:2]
+	d_data[0:TEST_SIZE,0:2]
 	)
 test_data_label = torch.Tensor(
-	data[0:TEST_SIZE,2:4]
+	d_data[0:TEST_SIZE,2:4]
 	)
 
-# DATASET Torch learning base
+## DATASET Torch learning base
 train_dataset = torch.utils.data.TensorDataset(
 	train_data,train_data_label)
 test_dataset = torch.utils.data.TensorDataset(
@@ -57,20 +57,11 @@ test_loader = torch.utils.data.DataLoader(
 	test_data, batch_size=1, shuffle=False)
 
 ## Learn Model
-N = TRAIN_SIZE
-D_in = TEST_SIZE
-H = TRAIN_BATCH_SIZE
-D_out = 2
-
 
 model = torch.nn.Sequential(
-	torch.nn.Conv2d(1,20,5),
-	torch.nn.ReLU(),
-	torch.nn.Conv2d(20,64,5),
-	torch.nn.ReLU()
-)
-
-
+	torch.nn.Linear(2, 10),
+	torch.nn.Linear(10, 2),
+	)
 
 loss_fn = torch.nn.MSELoss(size_average=False)
 learning_rate = 1e-3
@@ -79,22 +70,20 @@ optimizer = torch.optim.Adam(model.parameters(),
 pl =[[] for _ in range(3)]
 
 for t in range(100):
-    for i, (datas, target) in enumerate(train_loader):
-        x = Variable(datas)
-        y = Variable(target)
-        y_pred = model(x)
-        loss = loss_fn(y_pred, y)
-        print(t)
-        print( loss.datas[0])
+	for i, (data, target) in enumerate(train_loader):
+		x = Variable(data)
+		y = Variable(target)
+		y_pred = model(x)
+		loss = loss_fn(y_pred, y) ##
+		print(t)
+		print(loss.data)
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-    pl[1].append(loss.datas[0])
-    pl[0].append(t)
+		optimizer.zero_grad()
+		loss.backward()
+		optimizer.step()
+	pl[1].append(loss.data)
+	pl[0].append(t)
 accurrancy= 0
-
-# x = Variable(test_data)
 
 x = Variable(test_data)
 y = Variable(test_data_label, requires_grad=False)
@@ -102,13 +91,13 @@ y = Variable(test_data_label, requires_grad=False)
 y_pred = model(x)
 
 for i in range(TEST_SIZE):
-    d = y_pred[i,:]
-    valuesx, indicesx = torch.max(d, 0)
-    indices2 = numpy.argmax(test_data_label[i, :])
-    indices1 =  indicesx.data.numpy()[0]
-    print("predicted %f label %f" % (indices1,indices2  ))
-    if (indices1==indices2):
-        accurrancy += 1
+	d = y_pred[i,:]
+	valuesx, indicesx = torch.max(d, 0)
+	indices2 = np.argmax(test_data_label[i, :])
+	indices1 =  indicesx.data.numpy()[0]
+	print("predicted %f label %f" % (indices1,indices2  ))
+	if (indices1==indices2):
+		accurrancy += 1
 
 print("Correct Predictions: %d " % (accurrancy))
 print("Incorrect Predictions:  %d " 
