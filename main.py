@@ -59,8 +59,10 @@ test_loader = torch.utils.data.DataLoader(
 ## Learn Model
 
 model = torch.nn.Sequential(
-	torch.nn.Linear(2, 10),
-	torch.nn.Linear(10, 2),
+	torch.nn.Linear(2, 64),
+	torch.nn.Linear(64, 64),
+	torch.nn.Linear(64, 64),
+	torch.nn.Linear(64, 2),
 	)
 
 loss_fn = torch.nn.MSELoss(size_average=False)
